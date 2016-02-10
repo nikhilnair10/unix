@@ -9,6 +9,6 @@ echo " "
 echo -n "Printing arguments in reverse: "
 for (( i = "$#"; i > 0; i-- )); do
     #statements
-    echo -n "${!i},"
+    echo -n "${!i},"    # {!i} puts the value of i in the postional parameter same as eval n=\$$i
 done
 echo "END"
