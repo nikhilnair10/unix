@@ -24,3 +24,4 @@ if [[ "$pwd1" == "$pwd2" ]]; then
 else
     echo "Password Mismatch"
 fi
+stty echo
