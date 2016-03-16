@@ -1,0 +1,213 @@
+1a) A shell script that accepts two file name as arguments, checks if the permission for these files are identical and if the permissions are identical, output common permissions otherwise output each file name followed by its permissions.
+
+if [ $# -eq 0 ] ; then
+echo “No arguments”
+exit
+elif [ $# -lt 2 ] ; then
+echo “Only one arguments”
+exit
+else
+f1=`ls -l $1|tr -s " "|cut -d " " f1
+f2=`ls -l $2|cut -c ‘2-10’`
+if [ “$f1” = “$f2” ] ; then
+echo “File permission are identical”
+else
+echo “File permission are not identical”
+echo “The permission of first file is f1:$f1”
+echo “The permission of the second file is f2:$f2”
+fi
+fi
+
+
+1b)
+echo “Enter the three numbers”
+read a b c
+if [ $a -lt $b -a $a -lt $c ] ; then
+echo “$a is sma llest”
+elif [ $b -lt $c ] ; then
+echo “$b is smallest”
+else
+echo “$c is smallest”
+fi
+
+
+
+
+
+2a. A shell script that displays all the links to a file specified as the first argument to the script. The second argument , which is optional, can be used to specify in which the search is to begin, if this second argument is not present, the search is to begin in current working directory. In either case, the starting directory as well as all its subdirectories at all levels must be searched. The script need not include any error checking.
+
+if [ $# -eq 0 ] ; then
+echo “No arguments”
+exit
+fi
+if [ $# -eq 2 ] ; then
+dir=$2
+else
+dir=`pwd`
+fi
+inode=`stat -c %i $1`
+count=0
+for link in `find $dir -inum $inode`
+do
+echo $link
+count=`expr $count + 1`
+done
+if [ $count -eq 0 ] ; then
+echo “$1 has no link in the directory $dir”
+else
+echo “$1 has $count links in the directory $dir”
+fi
+
+
+
+
+2b. A shell script that accepts as file-name as argument and display its creation time if file exist and if it does not send output error message.
+
+if [ $# -eq 0 ] ; then
+echo “No Arguments”
+else
+for file in $*
+do
+if [ -f $file ] ; then
+fdate=`ls -l $file|tr -s ‘ ‘|cut -d ” ” -f 6 7`
+ftime=`ls -l $file|tr -s ‘ ‘|cut -d ” ” -f7`
+else
+echo “$file does not exit”
+fi	
+done
+fi
+echo “File modified on $fdate at $ftime”
+
+
+3a)echo "Enter a password"
+read pass1
+echo "Renter password"
+read pass2
+if [ $pass1 = $pass2 ]
+then
+    echo "Keyboard is locked"
+    trap " " 20 30 15 9 2 1 3
+    echo "Enter your password to unlock the screen"
+    read upass
+    while [ "$pass2" != "$upass" ]
+    do
+        echo "password is wrong !! "
+        echo "Renter password"
+        read upass
+    done
+else
+    echo "Password doesn't match"
+fi
+
+
+3.b. A shell script using expr command to read in a string and display a suitable message if it does not have at least 10 characters.
+
+echo “Enter the string”
+read str
+if [ -z str ] ; then
+echo “null character”
+else
+len=`expr “$str” : ‘.*’`
+if [ $len -ge 10 ] ; then
+echo “$str has $len character”
+else
+echo “$str has less than 10 character”
+fi
+fi
+
+
+
+
+
+
+4.a. A shell script to display the calendar for the current month with current date
+Replace by * or ** depending on whether the date has one digit or two digits.
+
+dt=`date +%d`
+if [ $dt -lt 10 ] ; then
+    cal -h | sed -r "s/\b$dt\b/*/"
+else
+    cal -h | sed -r "s/\b$dt\b/**/"
+fi
+
+
+
+
+4.b. Creating a script file called file-properties that reads a file name entered and outputs it properties.
+
+echo “Enter a file name”
+read file
+if [ ! -e $file ] ; then
+echo “File does not exit”
+exit
+else
+ftype=`ls -l $file|cut -c 1`
+fper=`ls -l $file|cut -c 2-10`
+fowner=`ls -l $file|tr -s ‘ ‘|cut -d ” ” -f3`
+fsize=`ls -l $file|tr -s ‘ ‘|cut -d ” ” -f5`
+fdate=`ls -l $file|tr -s ‘ ‘|cut -d ” ” -f6`
+ftime=`ls -l $file|tr -s ‘ ‘|cut -d ” ” -f7`
+fname=`ls -l $file|tr -s ‘ ‘|cut -d ” ” -f8`
+
+fi
+echo “The file type is : $ftype”
+echo “The file permission is : $fper”
+echo “The file owner is : $fowner”
+echo “The file size is : $fsize”
+echo “The file date is : $fdate”
+echo “The file time is : $ftime”
+echo “The file name is : $fname”
+
+OUTPUT:
+
+sh 4a.sh
+Enter a file name
+2.sh
+The file type is : –
+The file permission is : rw-rw-r–
+The file owner is : root
+The file size is : 104
+The file date is : 2009-04-30
+The file time is : 02:31
+The file name is : 2.sh
+
+
+
+5.a. A shell script that accept one or more file names as arguments and convert all of them to upper case, provided they exist in current directory.
+
+if [ $# -eq 0 ] ; then
+echo “No Arguments”
+exit
+else
+for file in $*
+do
+if [ -e $file ] ; then
+fname=`echo $file|tr ‘[a-z]’ ‘[A-Z]’`
+echo “The $file is converted to $fname ”
+else
+echo “The directory $file does not exit”
+fi
+done
+fi
+
+5.b. A shell script to compute the sum of number passed to it has argument on command line and display the result.
+
+echo “To compute the sum”
+num=$1
+sum=0
+while [ $num -gt 0 ] ; do
+rem=`expr $num % 10`
+num=`expr $num / 10`
+sum=`expr $rem + $sum`
+done
+echo “The result is $sum”
+
+OUTPUT:
+
+sh 7b.sh 245
+To compute the sum
+The result is 11
+
+sh 7b.sh 123
+To compute the sum
+The result is 6
